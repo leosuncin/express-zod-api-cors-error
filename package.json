@@ -1,0 +1,34 @@
+{
+  "name": "express-zod-api-cors-error",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reproduction error with CORS and express-zod-api",
+  "keywords": [],
+  "homepage": "https://github.com/leosuncin/express-zod-api-cors-error#readme",
+  "bugs": "https://github.com/leosuncin/express-zod-api-cors-error/issues",
+  "repository": "https://github.com/leosuncin/express-zod-api-cors-error.git",
+  "license": "GPL-3.0",
+  "author": "Jaime Leonardo Suncin Cruz",
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "build": "pnpm run --recursive build",
+    "dev": "pnpm run --recursive --parallel --aggregate-output dev",
+    "prepare": "husky install",
+    "start": "pnpm run --recursive --parallel --aggregate-output start",
+    "test": "pnpm run --recursive test"
+  },
+  "dependencies": {
+    "@commitlint/cli": "17.2.0",
+    "@commitlint/config-conventional": "17.2.0",
+    "@manypkg/cli": "0.19.2",
+    "husky": "8.0.2",
+    "lint-staged": "13.0.3",
+    "prettier": "2.7.1",
+    "sort-package-json": "2.1.0",
+    "syncpack": "8.3.9"
+  },
+  "packageManager": "pnpm@7.16.0"
+}

@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+PATH=$(npm bin):$PATH
+
+if [ -n "$CI" ]; then
+  exit 0
+fi
+
+commitlint --edit "$1"
