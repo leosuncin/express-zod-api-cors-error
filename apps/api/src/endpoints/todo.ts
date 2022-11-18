@@ -1,4 +1,4 @@
-import { defaultEndpointsFactory, z } from 'express-zod-api';
+import { createHttpError, defaultEndpointsFactory, z } from 'express-zod-api';
 import { NotFoundError } from 'slonik';
 
 import { container, TASK_SERVICE_TOKEN } from '~app/container';
@@ -30,5 +30,20 @@ export const listAllTodoEndpoint = defaultEndpointsFactory.build({
     } finally {
       return { todos };
     }
+  },
+});
+
+export const getOneTodoEndpoint = defaultEndpointsFactory.build({
+  method: 'get',
+  input: todo.pick({ id: true }),
+  output: todo,
+  async handler({ input }) {
+    const todo = await container.get(TASK_SERVICE_TOKEN).getOne(input.id);
+
+    if (!todo) {
+      throw createHttpError(404, `Not found any todo with id: ${input.id}`);
+    }
+
+    return todo;
   },
 });

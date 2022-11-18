@@ -30,6 +30,14 @@ export class TaskService {
       connection.many(sql.typeAlias('task')`SELECT * FROM tasks`),
     );
   }
+
+  getOne(id: Task['id']): Promise<Task | null> {
+    return this.pool.connect((connection) =>
+      connection.maybeOne(
+        sql.typeAlias('task')`SELECT * FROM tasks WHERE id = ${id}`,
+      ),
+    );
+  }
 }
 
 injected(TaskService, POOL_TOKEN);
