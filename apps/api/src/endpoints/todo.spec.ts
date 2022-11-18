@@ -5,7 +5,11 @@ import migrate from 'node-pg-migrate';
 import { DataType, newDb, type IBackup } from 'pg-mem';
 
 import { container, POOL_TOKEN, TASK_SERVICE_TOKEN } from '~app/container';
-import { createTodoEndpoint, listAllTodoEndpoint } from '~app/endpoints/todo';
+import {
+  createTodoEndpoint,
+  getOneTodoEndpoint,
+  listAllTodoEndpoint,
+} from '~app/endpoints/todo';
 import { TaskService } from '~app/services/task';
 import type { Task } from '~app/schemas/task';
 
@@ -136,6 +140,54 @@ describe('Todo endpoints', () => {
             },
           ],
         },
+      });
+    });
+  });
+
+  describe('GET /todo/:id', () => {
+    let task: Task;
+
+    beforeEach(() => {
+      task = db.public.getTable('tasks').insert({ title: 'Just do it' });
+    });
+
+    it('gets one todo by id', async () => {
+      const { responseMock } = await testEndpoint({
+        endpoint: getOneTodoEndpoint,
+        requestProps: {
+          params: {
+            id: task.id,
+          },
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        data: {
+          id: task.id,
+          title: task.title,
+          completed: task.completed,
+          order: task.order,
+        },
+        status: 'success',
+      });
+    });
+
+    it('fails when no todo is found', async () => {
+      const id = randomUUID();
+      const { responseMock } = await testEndpoint({
+        endpoint: getOneTodoEndpoint,
+        requestProps: {
+          params: { id },
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(404);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        error: {
+          message: `Not found any todo with id: ${id}`,
+        },
+        status: 'error',
       });
     });
   });
