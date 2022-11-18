@@ -5,8 +5,14 @@ export const task = z.object({
   title: z.string().trim().min(1),
   completed: z.boolean().default(false),
   order: z.number().positive(),
-  createdAt: z.dateOut(),
-  updatedAt: z.dateOut(),
+  createdAt: z.preprocess(
+    (timestamp) => new Date(z.number().parse(timestamp)),
+    z.dateOut(),
+  ),
+  updatedAt: z.preprocess(
+    (timestamp) => new Date(z.number().parse(timestamp)),
+    z.dateOut(),
+  ),
 });
 
 export const todo = task.omit({ createdAt: true, updatedAt: true });

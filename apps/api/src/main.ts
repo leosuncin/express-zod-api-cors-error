@@ -4,12 +4,13 @@ import { createInterceptors } from 'slonik-interceptor-preset';
 
 import { config, env } from '~app/config';
 import { container, POOL_TOKEN, TASK_SERVICE_TOKEN } from '~app/container';
+import { createResultParserInterceptor } from '~app/interceptors/result-parser';
 import { routing } from '~app/routing';
 import { TaskService } from '~app/services/task';
 
 export async function bootstrap() {
   const pool = await createPool(env.DATABASE_URL, {
-    interceptors: createInterceptors(),
+    interceptors: createInterceptors().concat(createResultParserInterceptor()),
   });
 
   container.bind(POOL_TOKEN).toConstant(pool);
