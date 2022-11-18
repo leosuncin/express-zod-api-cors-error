@@ -2,13 +2,14 @@ import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { testEndpoint } from 'express-zod-api';
 import migrate from 'node-pg-migrate';
-import { DataType, newDb, type IBackup } from 'pg-mem';
+import { DataType, type ISubscription, newDb, type IBackup } from 'pg-mem';
 
 import { container, POOL_TOKEN, TASK_SERVICE_TOKEN } from '~app/container';
 import {
   createTodoEndpoint,
   getOneTodoEndpoint,
   listAllTodoEndpoint,
+  updateOneTodoEndpoint,
 } from '~app/endpoints/todo';
 import { TaskService } from '~app/services/task';
 import type { Task } from '~app/schemas/task';
@@ -190,5 +191,106 @@ describe('Todo endpoints', () => {
         status: 'error',
       });
     });
+  });
+
+  describe('PUT /todo/:id', () => {
+    let task: Task;
+    let subscription: ISubscription;
+
+    beforeEach(() => {
+      task = db.public.getTable('tasks').insert({ title: 'Change me' });
+      subscription = db.public.interceptQueries((sql) => {
+        if (/IS DISTINCT/iu.test(sql)) {
+          const result = /SET "(?<column>\w*)"\s+=\s+'(?<value>.*)',/.exec(sql);
+          const { column, value } = result!.groups!;
+          function safeParse(value: string) {
+            try {
+              return eval(value);
+            } catch {
+              return value;
+            }
+          }
+
+          return [
+            { ...task, [column!]: safeParse(value!), updatedAt: Date.now() },
+          ];
+        }
+
+        return null;
+      });
+    });
+
+    afterEach(() => {
+      subscription.unsubscribe();
+    });
+
+    it.each([
+      { completed: true },
+      { title: 'Do something else' },
+      { order: 3 },
+    ])('updates one existing todo by id with %j', async (body) => {
+      const { responseMock } = await testEndpoint({
+        endpoint: updateOneTodoEndpoint,
+        requestProps: {
+          method: 'PUT',
+          params: { id: task.id },
+          body,
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        data: {
+          id: task.id,
+          title: task.title,
+          completed: task.completed,
+          order: task.order,
+          ...body,
+        },
+        status: 'success',
+      });
+    });
+
+    it('fails when no todo is found', async () => {
+      const id = randomUUID();
+      const { responseMock } = await testEndpoint({
+        endpoint: updateOneTodoEndpoint,
+        requestProps: {
+          method: 'PUT',
+          params: { id },
+          body: { title: 'Consequat cillum laborum' },
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(404);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        error: {
+          message: `Not found any todo with id: ${id}`,
+        },
+        status: 'error',
+      });
+    });
+
+    it.each([{ completed: 'no' }, { order: '2' }, { title: false }])(
+      'validates the input %j',
+      async (body) => {
+        const { responseMock } = await testEndpoint({
+          endpoint: updateOneTodoEndpoint,
+          requestProps: {
+            method: 'PUT',
+            params: { id: task.id },
+            body,
+          },
+        });
+
+        expect(responseMock.status).toHaveBeenCalledWith(400);
+        expect(responseMock.json).toHaveBeenCalledWith({
+          status: 'error',
+          error: {
+            message: expect.stringContaining(Object.keys(body)[0]!),
+          },
+        });
+      },
+    );
   });
 });

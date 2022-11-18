@@ -2,7 +2,7 @@ import { injected } from 'brandi';
 import { createSqlTag, type DatabasePool } from 'slonik';
 
 import { POOL_TOKEN } from '~app/container';
-import { CreateTask, Task, task } from '~app/schemas/task';
+import { CreateTask, EditTodo, Task, task } from '~app/schemas/task';
 
 const sql = createSqlTag({
   typeAliases: { task },
@@ -35,6 +35,33 @@ export class TaskService {
     return this.pool.connect((connection) =>
       connection.maybeOne(
         sql.typeAlias('task')`SELECT * FROM tasks WHERE id = ${id}`,
+      ),
+    );
+  }
+
+  updateOne(
+    id: Task['id'],
+    changes: Omit<EditTodo, 'id'>,
+  ): Promise<Task | null> {
+    return this.pool.connect((connection) =>
+      connection.maybeOne(
+        sql.typeAlias('task')`UPDATE tasks SET ${sql.join(
+          Object.entries(changes).map(
+            ([key, value]) =>
+              sql.fragment`${sql.identifier([key])} = ${
+                value as string | number | boolean
+              }`,
+          ),
+          sql.fragment`,`,
+        )}, updated_at = NOW() WHERE id = ${id} AND ${sql.join(
+          Object.entries(changes).map(
+            ([key, value]) =>
+              sql.fragment`${sql.identifier([key])} IS DISTINCT FROM ${
+                value as string | number | boolean
+              }`,
+          ),
+          sql.fragment` OR `,
+        )} RETURNING *`,
       ),
     );
   }

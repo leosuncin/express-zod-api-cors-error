@@ -36,7 +36,6 @@ importers:
       pg-mem: 2.6.4
       slonik: 33.0.3
       slonik-interceptor-preset: 1.2.10
-      slonik-utilities: 2.0.1
       ts-jest: 29.0.3
       ts-node: 10.9.1
       tsx: 3.12.1
@@ -49,7 +48,6 @@ importers:
       express-zod-api: 8.3.4_ij6xho3pw2rqw2grs4atjzapiy
       slonik: 33.0.3
       slonik-interceptor-preset: 1.2.10
-      slonik-utilities: 2.0.1_slonik@33.0.3
     devDependencies:
       '@tsconfig/node18-strictest': 1.0.0
       '@types/jest': 29.2.3
@@ -5493,13 +5491,6 @@ packages:
       - supports-color
     dev: false
 
-  /serialize-error/5.0.0:
-    resolution: {integrity: sha512-/VtpuyzYf82mHYTtI4QKtwHa79vAdU5OQpNPAmE/0UDdlGT0ZxHwC+J6gXkw29wwoVI8fMPsfcVHOwXtUQYYQA==}
-    engines: {node: '>=8'}
-    dependencies:
-      type-fest: 0.8.1
-    dev: false
-
   /serialize-error/7.0.1:
     resolution: {integrity: sha512-8I8TjW5KMOKsZQTvoxjuSIa7foAwPWGOts+6o7sgjz41/qMD9VQHEDxi6PBvK2l0MXUmqZyNpUK+T2tQaaElvw==}
     engines: {node: '>=10'}
@@ -5687,21 +5678,6 @@ packages:
       slonik: 22.7.1
     transitivePeerDependencies:
       - pg-native
-    dev: false
-
-  /slonik-utilities/2.0.1_slonik@33.0.3:
-    resolution: {integrity: sha512-byf5OAzgWC0hi21jCuOdvxQxIN2oidAOmcDe2dXt0w/rQ/Ox0i0yWG14794PALZYheOwHK83WBE2fgAh6KBV1Q==}
-    engines: {node: '>=8.0'}
-    peerDependencies:
-      slonik: ^28 | ^29
-    dependencies:
-      core-js: 3.26.1
-      delay: 4.4.1
-      es6-error: 4.1.1
-      lodash: 4.17.21
-      roarr: 7.14.0
-      serialize-error: 5.0.0
-      slonik: 33.0.3
     dev: false
 
   /slonik/22.7.1:
