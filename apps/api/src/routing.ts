@@ -5,6 +5,7 @@ import {
   createTodoEndpoint,
   getOneTodoEndpoint,
   listAllTodoEndpoint,
+  updateOneTodoEndpoint,
 } from '~app/endpoints/todo';
 
 export const routing: Routing = {
@@ -14,6 +15,9 @@ export const routing: Routing = {
       post: createTodoEndpoint,
       get: listAllTodoEndpoint,
     }),
-    ':id': getOneTodoEndpoint,
+    ':id': new DependsOnMethod({
+      get: getOneTodoEndpoint,
+      put: updateOneTodoEndpoint,
+    }),
   },
 };
