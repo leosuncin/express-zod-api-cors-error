@@ -2,7 +2,7 @@ import { createHttpError, defaultEndpointsFactory, z } from 'express-zod-api';
 import { NotFoundError } from 'slonik';
 
 import { container, TASK_SERVICE_TOKEN } from '~app/container';
-import { createTodo, Todo, todo } from '~app/schemas/task';
+import { createTodo, editTodo, Todo, todo } from '~app/schemas/task';
 
 export const createTodoEndpoint = defaultEndpointsFactory.build({
   method: 'post',
@@ -43,6 +43,24 @@ export const getOneTodoEndpoint = defaultEndpointsFactory.build({
     if (!todo) {
       throw createHttpError(404, `Not found any todo with id: ${input.id}`);
     }
+
+    return todo;
+  },
+});
+
+export const updateOneTodoEndpoint = defaultEndpointsFactory.build({
+  method: 'put',
+  input: editTodo,
+  output: todo,
+  async handler({ input: { id, ...changes } }) {
+    const service = container.get(TASK_SERVICE_TOKEN);
+    let todo = await service.getOne(id);
+
+    if (!todo) {
+      throw createHttpError(404, `Not found any todo with id: ${id}`);
+    }
+
+    todo = (await service.updateOne(todo.id, changes)) ?? todo;
 
     return todo;
   },

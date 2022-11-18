@@ -21,8 +21,20 @@ export const createTodo = task
   .pick({ title: true })
   .merge(task.pick({ order: true }).partial());
 
+export const editTodo = task.pick({ id: true }).merge(
+  task
+    .pick({
+      completed: true,
+      order: true,
+      title: true,
+    })
+    .partial(),
+);
+
 export type Task = z.infer<typeof task>;
 
 export type Todo = z.infer<typeof todo>;
 
 export type CreateTask = z.infer<typeof createTodo>;
+
+export type EditTodo = z.infer<typeof editTodo>;

@@ -19,8 +19,7 @@
     "envalid": "7.3.1",
     "express-zod-api": "8.3.4",
     "slonik": "33.0.3",
-    "slonik-interceptor-preset": "1.2.10",
-    "slonik-utilities": "2.0.1"
+    "slonik-interceptor-preset": "1.2.10"
   },
   "devDependencies": {
     "@tsconfig/node18-strictest": "1.0.0",

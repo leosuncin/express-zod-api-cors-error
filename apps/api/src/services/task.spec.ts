@@ -36,6 +36,19 @@ describe('TaskService', () => {
           ]);
         }
 
+        if (/UPDATE/.test(sql)) {
+          return createMockQueryResult([
+            {
+              id: values[1] as string,
+              title: typeof values[0] === 'string' ? values[0] : '',
+              completed: typeof values[0] === 'boolean' ? values[0] : false,
+              order: typeof values[0] === 'number' ? values[0] : 1,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            },
+          ]);
+        }
+
         return createMockQueryResult([]);
       },
     });
@@ -65,4 +78,19 @@ describe('TaskService', () => {
     expect(task).toBeDefined();
     expect(task).toHaveProperty('id', id);
   });
+
+  it.each([{ completed: true }, { title: 'Do something else' }, { order: 3 }])(
+    'should update one existing task by its id with %j',
+    async (changes) => {
+      const id = randomUUID();
+      const task = await service.updateOne(id, changes);
+
+      expect(task).toBeDefined();
+      expect(task).toHaveProperty('id', id);
+      expect(task).toHaveProperty(
+        Object.keys(changes)[0] as string,
+        Object.values(changes)[0],
+      );
+    },
+  );
 });
