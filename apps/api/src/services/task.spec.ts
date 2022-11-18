@@ -14,9 +14,22 @@ describe('TaskService', () => {
           return createMockQueryResult([
             {
               id: randomUUID(),
-              title: values.at(0) as string,
+              title: values[0] as string,
               completed: false,
-              order: values.at(1) ?? 1,
+              order: values[1] ?? 1,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            },
+          ]);
+        }
+
+        if (/SELECT */.test(sql)) {
+          return createMockQueryResult([
+            {
+              id: randomUUID(),
+              title: 'Do something',
+              completed: false,
+              order: 1,
               createdAt: Date.now(),
               updatedAt: Date.now(),
             },
@@ -36,5 +49,12 @@ describe('TaskService', () => {
     const task = await service.createOne(newTask);
 
     expect(task).toMatchObject(newTask);
+  });
+
+  it('should list all of the tasks', async () => {
+    const tasks = await service.listAll();
+
+    expect(Array.isArray(tasks)).toBe(true);
+    expect(tasks.length).toBeGreaterThanOrEqual(1);
   });
 });

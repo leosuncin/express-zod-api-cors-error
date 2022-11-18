@@ -1,9 +1,12 @@
-import type { Routing } from 'express-zod-api';
+import { DependsOnMethod, type Routing } from 'express-zod-api';
 
 import { healthCheckEndpoint } from '~app/endpoints/health';
-import { createTodoEndpoint } from '~app/endpoints/todo';
+import { createTodoEndpoint, listAllTodoEndpoint } from '~app/endpoints/todo';
 
 export const routing: Routing = {
   health: healthCheckEndpoint,
-  todo: createTodoEndpoint,
+  todo: new DependsOnMethod({
+    post: createTodoEndpoint,
+    get: listAllTodoEndpoint,
+  }),
 };
