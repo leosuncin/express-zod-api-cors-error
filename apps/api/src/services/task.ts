@@ -24,6 +24,12 @@ export class TaskService {
       ),
     );
   }
+
+  listAll(): Promise<ArrayLike<Task>> {
+    return this.pool.connect((connection) =>
+      connection.many(sql.typeAlias('task')`SELECT * FROM tasks`),
+    );
+  }
 }
 
 injected(TaskService, POOL_TOKEN);

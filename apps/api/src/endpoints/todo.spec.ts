@@ -5,8 +5,9 @@ import migrate from 'node-pg-migrate';
 import { DataType, newDb, type IBackup } from 'pg-mem';
 
 import { container, POOL_TOKEN, TASK_SERVICE_TOKEN } from '~app/container';
-import { createTodoEndpoint } from '~app/endpoints/todo';
+import { createTodoEndpoint, listAllTodoEndpoint } from '~app/endpoints/todo';
 import { TaskService } from '~app/services/task';
+import type { Task } from '~app/schemas/task';
 
 const db = newDb();
 
@@ -93,6 +94,47 @@ describe('Todo endpoints', () => {
         status: 'error',
         error: {
           message: 'title: Required',
+        },
+      });
+    });
+  });
+
+  describe('GET /todo', () => {
+    it('returns an empty array when there is none', async () => {
+      const { responseMock } = await testEndpoint({
+        endpoint: listAllTodoEndpoint,
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        status: 'success',
+        data: {
+          todos: [],
+        },
+      });
+    });
+
+    it('returns all of the todos', async () => {
+      const task: Task = db.public
+        .getTable('tasks')
+        .insert({ title: 'Just do it' });
+
+      const { responseMock } = await testEndpoint({
+        endpoint: listAllTodoEndpoint,
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        status: 'success',
+        data: {
+          todos: [
+            {
+              id: task.id,
+              title: task.title,
+              completed: task.completed,
+              order: task.order,
+            },
+          ],
         },
       });
     });
