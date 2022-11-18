@@ -26,7 +26,7 @@ describe('TaskService', () => {
         if (/SELECT */.test(sql)) {
           return createMockQueryResult([
             {
-              id: randomUUID(),
+              id: values[0] ?? randomUUID(),
               title: 'Do something',
               completed: false,
               order: 1,
@@ -56,5 +56,13 @@ describe('TaskService', () => {
 
     expect(Array.isArray(tasks)).toBe(true);
     expect(tasks.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should get one task by its id', async () => {
+    const id = randomUUID();
+    const task = await service.getOne(id);
+
+    expect(task).toBeDefined();
+    expect(task).toHaveProperty('id', id);
   });
 });
