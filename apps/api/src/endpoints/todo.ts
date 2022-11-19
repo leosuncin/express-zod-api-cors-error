@@ -5,6 +5,7 @@ import { container, TASK_SERVICE_TOKEN } from '~app/container';
 import {
   createTodo,
   editTodo,
+  idsTodo,
   Todo,
   todo,
   toggleTodo,
@@ -104,5 +105,16 @@ export const toggleAllTodoEndpoint = defaultEndpointsFactory.build({
     } finally {
       return { todos };
     }
+  },
+});
+
+export const removeAllTodoEndpoint = defaultEndpointsFactory.build({
+  method: 'delete',
+  input: idsTodo,
+  output: z.object({ todos: z.array(z.unknown()) }),
+  async handler({ input }) {
+    await container.get(TASK_SERVICE_TOKEN).removeAll(input.ids);
+
+    return { todos: [] };
   },
 });

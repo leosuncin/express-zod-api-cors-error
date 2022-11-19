@@ -9,6 +9,7 @@ import {
   createTodoEndpoint,
   getOneTodoEndpoint,
   listAllTodoEndpoint,
+  removeAllTodoEndpoint,
   removeOneTodoEndpoint,
   toggleAllTodoEndpoint,
   updateOneTodoEndpoint,
@@ -409,5 +410,56 @@ describe('Todo endpoints', () => {
         });
       },
     );
+  });
+
+  describe('DELETE /todo', () => {
+    let task: Task;
+
+    beforeEach(() => {
+      task = db.public
+        .getTable('tasks')
+        .insert({ title: 'Amet officia veniam id.' });
+    });
+
+    it('remove all of the todos', async () => {
+      const { responseMock } = await testEndpoint({
+        endpoint: removeAllTodoEndpoint,
+        requestProps: {
+          method: 'DELETE',
+        },
+      });
+      const { count } = db.public.one('SELECT COUNT(*) FROM tasks');
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        status: 'success',
+        data: {
+          todos: [],
+        },
+      });
+      expect(count).toBe(0);
+    });
+
+    it('should remove only the filtered todos by id', async () => {
+      db.public.getTable('tasks').insert({ title: 'Amet est sint amet.' });
+
+      const { responseMock } = await testEndpoint({
+        endpoint: removeAllTodoEndpoint,
+        requestProps: {
+          method: 'DELETE',
+          query: {
+            ids: [task.id],
+          },
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        status: 'success',
+        data: {
+          todos: [],
+        },
+      });
+    });
   });
 });

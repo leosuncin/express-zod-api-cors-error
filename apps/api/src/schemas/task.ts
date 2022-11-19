@@ -33,6 +33,10 @@ export const editTodo = task.pick({ id: true }).merge(
 
 export const toggleTodo = task.pick({ completed: true }).partial();
 
+export const idsTodo = z.object({
+  ids: z.array(z.string().trim().uuid()).optional(),
+});
+
 export type Task = z.infer<typeof task>;
 
 export type Todo = z.infer<typeof todo>;
