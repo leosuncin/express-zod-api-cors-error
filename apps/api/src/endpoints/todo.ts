@@ -2,7 +2,13 @@ import { createHttpError, defaultEndpointsFactory, z } from 'express-zod-api';
 import { NotFoundError } from 'slonik';
 
 import { container, TASK_SERVICE_TOKEN } from '~app/container';
-import { createTodo, editTodo, Todo, todo } from '~app/schemas/task';
+import {
+  createTodo,
+  editTodo,
+  Todo,
+  todo,
+  toggleTodo,
+} from '~app/schemas/task';
 
 export const createTodoEndpoint = defaultEndpointsFactory.build({
   method: 'post',
@@ -78,5 +84,25 @@ export const removeOneTodoEndpoint = defaultEndpointsFactory.build({
     }
 
     return todo;
+  },
+});
+
+export const toggleAllTodoEndpoint = defaultEndpointsFactory.build({
+  method: 'put',
+  input: toggleTodo,
+  output: z.object({ todos: z.array(todo) }),
+  async handler({ input: { completed } }) {
+    let todos: Array<Todo> = [];
+    try {
+      todos = (await container
+        .get(TASK_SERVICE_TOKEN)
+        .toggleAll(completed)) as unknown as Array<Todo>;
+    } catch (error) {
+      if (!(error instanceof NotFoundError)) {
+        throw error;
+      }
+    } finally {
+      return { todos };
+    }
   },
 });
