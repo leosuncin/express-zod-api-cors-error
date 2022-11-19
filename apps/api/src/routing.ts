@@ -5,6 +5,7 @@ import {
   createTodoEndpoint,
   getOneTodoEndpoint,
   listAllTodoEndpoint,
+  removeOneTodoEndpoint,
   updateOneTodoEndpoint,
 } from '~app/endpoints/todo';
 
@@ -18,6 +19,7 @@ export const routing: Routing = {
     ':id': new DependsOnMethod({
       get: getOneTodoEndpoint,
       put: updateOneTodoEndpoint,
+      delete: removeOneTodoEndpoint,
     }),
   },
 };
