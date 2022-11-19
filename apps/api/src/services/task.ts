@@ -73,6 +73,22 @@ export class TaskService {
       ),
     );
   }
+
+  toggleAll(completed?: Task['completed']): Promise<ArrayLike<Task>> {
+    return this.pool.connect((connection) =>
+      connection.many(
+        sql.typeAlias('task')`UPDATE tasks SET completed = ${
+          typeof completed === 'boolean'
+            ? completed
+            : sql.fragment`NOT(completed)`
+        }, updated_at = NOW() ${
+          typeof completed === 'boolean'
+            ? sql.fragment`WHERE completed IS DISTINCT FROM ${completed}`
+            : sql.fragment``
+        } RETURNING *`,
+      ),
+    );
+  }
 }
 
 injected(TaskService, POOL_TOKEN);

@@ -114,4 +114,13 @@ describe('TaskService', () => {
     expect(task).toBeDefined();
     expect(task).toHaveProperty('id', id);
   });
+
+  it.each([undefined, true, false])(
+    'should toggle completed (%p) of all of the tasks',
+    async (completed) => {
+      const tasks = await service.toggleAll(completed);
+
+      expect(Array.isArray(tasks)).toBe(true);
+    },
+  );
 });
