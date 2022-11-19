@@ -65,3 +65,18 @@ export const updateOneTodoEndpoint = defaultEndpointsFactory.build({
     return todo;
   },
 });
+
+export const removeOneTodoEndpoint = defaultEndpointsFactory.build({
+  method: 'delete',
+  input: todo.pick({ id: true }),
+  output: todo,
+  async handler({ input: { id } }) {
+    const todo = await container.get(TASK_SERVICE_TOKEN).removeOne(id);
+
+    if (!todo) {
+      throw createHttpError(404, `Not found any todo with id: ${id}`);
+    }
+
+    return todo;
+  },
+});

@@ -9,6 +9,7 @@ import {
   createTodoEndpoint,
   getOneTodoEndpoint,
   listAllTodoEndpoint,
+  removeOneTodoEndpoint,
   updateOneTodoEndpoint,
 } from '~app/endpoints/todo';
 import { TaskService } from '~app/services/task';
@@ -292,5 +293,53 @@ describe('Todo endpoints', () => {
         });
       },
     );
+  });
+
+  describe('DELETE /todo/:id', () => {
+    let task: Task;
+
+    beforeEach(() => {
+      task = db.public.getTable('tasks').insert({ title: 'Remove me' });
+    });
+
+    it('removes one existing todo by id', async () => {
+      const { responseMock } = await testEndpoint({
+        endpoint: removeOneTodoEndpoint,
+        requestProps: {
+          method: 'DELETE',
+          params: { id: task.id },
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        data: {
+          id: task.id,
+          title: task.title,
+          completed: task.completed,
+          order: task.order,
+        },
+        status: 'success',
+      });
+    });
+
+    it('fails when no todo is found', async () => {
+      const id = randomUUID();
+      const { responseMock } = await testEndpoint({
+        endpoint: removeOneTodoEndpoint,
+        requestProps: {
+          method: 'DELETE',
+          params: { id },
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(404);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        error: {
+          message: `Not found any todo with id: ${id}`,
+        },
+        status: 'error',
+      });
+    });
   });
 });
