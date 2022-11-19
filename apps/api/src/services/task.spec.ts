@@ -49,6 +49,19 @@ describe('TaskService', () => {
           ]);
         }
 
+        if (/DELETE/.test(sql)) {
+          return createMockQueryResult([
+            {
+              id: values[0] as string,
+              title: 'Remove me',
+              completed: true,
+              order: 1,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            },
+          ]);
+        }
+
         return createMockQueryResult([]);
       },
     });
@@ -93,4 +106,12 @@ describe('TaskService', () => {
       );
     },
   );
+
+  it('should remove one existing task by its id', async () => {
+    const id = randomUUID();
+    const task = await service.removeOne(id);
+
+    expect(task).toBeDefined();
+    expect(task).toHaveProperty('id', id);
+  });
 });

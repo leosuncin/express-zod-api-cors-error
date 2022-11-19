@@ -65,6 +65,14 @@ export class TaskService {
       ),
     );
   }
+
+  removeOne(id: Task['id']): Promise<Task | null> {
+    return this.pool.connect((connection) =>
+      connection.maybeOne(
+        sql.typeAlias('task')`DELETE FROM tasks WHERE id = ${id} RETURNING *`,
+      ),
+    );
+  }
 }
 
 injected(TaskService, POOL_TOKEN);
