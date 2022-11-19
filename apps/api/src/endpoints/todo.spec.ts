@@ -10,6 +10,7 @@ import {
   getOneTodoEndpoint,
   listAllTodoEndpoint,
   removeOneTodoEndpoint,
+  toggleAllTodoEndpoint,
   updateOneTodoEndpoint,
 } from '~app/endpoints/todo';
 import { TaskService } from '~app/services/task';
@@ -341,5 +342,72 @@ describe('Todo endpoints', () => {
         status: 'error',
       });
     });
+  });
+
+  describe('PUT /todo', () => {
+    it("returns an empty array when there isn't any todos to toggle", async () => {
+      const { responseMock } = await testEndpoint({
+        endpoint: toggleAllTodoEndpoint,
+        requestProps: {
+          method: 'PUT',
+        },
+      });
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        status: 'success',
+        data: {
+          todos: [],
+        },
+      });
+    });
+
+    it.each([undefined, { completed: true }, { completed: false }])(
+      'toggles all of the todos with %p',
+      async (body) => {
+        const pendingTask: Task = db.public
+          .getTable('tasks')
+          .insert({ title: 'Pending', completed: false });
+        const completedTask: Task = db.public
+          .getTable('tasks')
+          .insert({ title: 'Done', completed: true });
+        const subscription = db.public.interceptQueries((sql) => {
+          if (/completed = NOT(completed)/.test(sql)) {
+            return [
+              { ...pendingTask, completed: !pendingTask.completed },
+              { ...completedTask, completed: !completedTask.completed },
+            ];
+          }
+          if (/completed = 'true'/.test(sql)) {
+            return [{ ...pendingTask, completed: true }];
+          }
+          if (/completed = 'false'/.test(sql)) {
+            return [{ ...completedTask, completed: false }];
+          }
+          return null;
+        });
+
+        const { responseMock } = await testEndpoint({
+          endpoint: toggleAllTodoEndpoint,
+          requestProps: {
+            method: 'PUT',
+            body,
+          },
+        });
+        subscription.unsubscribe();
+
+        expect(responseMock.status).toHaveBeenCalledWith(200);
+        expect(responseMock.json).toHaveBeenCalledWith({
+          status: 'success',
+          data: {
+            todos: expect.arrayContaining([
+              expect.objectContaining({
+                completed: body ? body.completed : expect.any(Boolean),
+              }),
+            ]),
+          },
+        });
+      },
+    );
   });
 });
