@@ -345,12 +345,12 @@ describe('Todo endpoints', () => {
     });
   });
 
-  describe('PUT /todo', () => {
+  describe('PATCH /todo', () => {
     it("returns an empty array when there isn't any todos to toggle", async () => {
       const { responseMock } = await testEndpoint({
         endpoint: toggleAllTodoEndpoint,
         requestProps: {
-          method: 'PUT',
+          method: 'PATCH',
         },
       });
 
@@ -391,7 +391,7 @@ describe('Todo endpoints', () => {
         const { responseMock } = await testEndpoint({
           endpoint: toggleAllTodoEndpoint,
           requestProps: {
-            method: 'PUT',
+            method: 'PATCH',
             body,
           },
         });
@@ -434,7 +434,7 @@ describe('Todo endpoints', () => {
       expect(responseMock.json).toHaveBeenCalledWith({
         status: 'success',
         data: {
-          todos: [],
+          todos: expect.arrayContaining([expect.anything()]),
         },
       });
       expect(count).toBe(0);

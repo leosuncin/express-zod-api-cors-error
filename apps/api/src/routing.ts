@@ -17,7 +17,7 @@ export const routing: Routing = {
     '': new DependsOnMethod({
       post: createTodoEndpoint,
       get: listAllTodoEndpoint,
-      put: toggleAllTodoEndpoint,
+      patch: toggleAllTodoEndpoint,
       delete: removeAllTodoEndpoint,
     }),
     ':id': new DependsOnMethod({
