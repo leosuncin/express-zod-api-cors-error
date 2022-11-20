@@ -125,8 +125,8 @@ describe('TaskService', () => {
   );
 
   it('should remove all of the tasks', async () => {
-    await expect(service.removeAll()).resolves.toBeGreaterThan(0);
-    await expect(service.removeAll([])).resolves.toBeGreaterThan(0);
-    await expect(service.removeAll([randomUUID()])).resolves.toBeGreaterThan(0);
+    await expect(service.removeAll()).resolves.toHaveLength(1);
+    await expect(service.removeAll([])).resolves.toHaveLength(1);
+    await expect(service.removeAll([randomUUID()])).resolves.toHaveLength(1);
   });
 });

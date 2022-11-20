@@ -90,17 +90,17 @@ export class TaskService {
     );
   }
 
-  removeAll(ids?: Array<Task['id']>): Promise<number> {
+  removeAll(ids?: Array<Task['id']>): Promise<ArrayLike<Task>> {
     return this.pool.connect(async (connection) => {
-      const result = await connection.query(
-        sql.unsafe`DELETE FROM tasks ${
+      const tasks = await connection.many(
+        sql.typeAlias('task')`DELETE FROM tasks ${
           Array.isArray(ids) && ids.length > 0
             ? sql.fragment`WHERE id = ANY(${sql.array(ids, 'uuid')})`
             : sql.fragment``
-        }`,
+        } RETURNING *`,
       );
 
-      return result.rowCount;
+      return tasks;
     });
   }
 }
