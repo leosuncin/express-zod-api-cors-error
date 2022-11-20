@@ -1,34 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useEffect } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import Footer from './todo/Footer';
+import Header from './todo/Header';
+import {
+  listTodos,
+  selectActiveCount,
+  selectAllCount,
+  selectCompletedCount,
+} from './todo/todo.slice';
+import TodoList from './todo/TodoList';
+
+function TodoMvc() {
+  const allCount = useAppSelector(selectAllCount);
+  const activeCount = useAppSelector(selectActiveCount);
+  const completedCount = useAppSelector(selectCompletedCount);
+  const dispatch = useAppDispatch();
+  const showTodoList = allCount > 0;
+  const showFooter = activeCount > 0 || completedCount > 0;
+
+  useEffect(() => {
+    const promise = dispatch(listTodos());
+
+    return () => {
+      promise.abort();
+    };
+  }, [dispatch]);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="todoapp">
+      <Header />
+      {showTodoList ? <TodoList /> : null}
+      {showFooter ? <Footer /> : null}
     </div>
-  )
+  );
 }
 
-export default App
+export default TodoMvc;
