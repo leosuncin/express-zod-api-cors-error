@@ -89,7 +89,7 @@ export const removeOneTodoEndpoint = defaultEndpointsFactory.build({
 });
 
 export const toggleAllTodoEndpoint = defaultEndpointsFactory.build({
-  method: 'put',
+  method: 'patch',
   input: toggleTodo,
   output: z.object({ todos: z.array(todo) }),
   async handler({ input: { completed } }) {
@@ -111,10 +111,20 @@ export const toggleAllTodoEndpoint = defaultEndpointsFactory.build({
 export const removeAllTodoEndpoint = defaultEndpointsFactory.build({
   method: 'delete',
   input: idsTodo,
-  output: z.object({ todos: z.array(z.unknown()) }),
+  output: z.object({ todos: z.array(todo) }),
   async handler({ input }) {
-    await container.get(TASK_SERVICE_TOKEN).removeAll(input.ids);
+    try {
+      const todos = (await container
+        .get(TASK_SERVICE_TOKEN)
+        .removeAll(input.ids)) as unknown as Array<Todo>;
 
-    return { todos: [] };
+      return { todos };
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return { todos: [] };
+      }
+
+      throw error;
+    }
   },
 });
