@@ -1,5 +1,5 @@
 {
-  "*.{js,ts}": ["prettier --write"],
+  "*.{js,ts,tsx}": ["prettier --write"],
   "*.{json,md,yml,toml}": ["prettier --write"],
   "package.json": ["syncpack format --source", "sort-package-json"]
 }
