@@ -16,14 +16,17 @@
   "scripts": {
     "build": "pnpm run --recursive build",
     "dev": "pnpm run --recursive --parallel --aggregate-output dev",
-    "prepare": "husky install",
+    "prepare": "husky install; playwright install",
     "start": "pnpm run --recursive --parallel --aggregate-output start",
-    "test": "pnpm run --recursive test"
+    "test": "pnpm run --recursive test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@commitlint/cli": "17.2.0",
     "@commitlint/config-conventional": "17.2.0",
     "@manypkg/cli": "0.19.2",
+    "@playwright/test": "1.28.0",
+    "@types/node": "18.11.9",
     "husky": "8.0.2",
     "lint-staged": "13.0.3",
     "prettier": "2.7.1",
