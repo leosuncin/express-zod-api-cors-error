@@ -9,4 +9,10 @@ export default defineConfig({
       '/todo': 'http://localhost:3333',
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    css: true,
+    setupFiles: ['./src/setupTests.ts'],
+  },
 });
