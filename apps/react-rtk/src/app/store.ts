@@ -1,12 +1,26 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  ThunkAction,
+  Action,
+  PreloadedState,
+} from '@reduxjs/toolkit';
 
 import { todoSlice } from '../todo/todo.slice';
 
-export const store = configureStore({
-  reducer: {
-    [todoSlice.name]: todoSlice.reducer,
-  },
-});
+export const makeStore = (
+  preloadedState?: PreloadedState<{
+    [todoSlice.name]: ReturnType<typeof todoSlice.reducer>;
+  }>,
+) => {
+  return configureStore({
+    preloadedState,
+    reducer: {
+      [todoSlice.name]: todoSlice.reducer,
+    },
+  });
+};
+
+export const store = makeStore();
 
 export type AppDispatch = typeof store.dispatch;
 
