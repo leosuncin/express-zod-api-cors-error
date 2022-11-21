@@ -1,0 +1,47 @@
+services:
+  traefik:
+    image: traefik:v2.9
+    command:
+      #- "--log.level=DEBUG"
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+    ports:
+      - '80:80'
+      - '8080:8080'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+  api:
+    build:
+      context: ./apps/api
+      args:
+        PORT: 1337
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`todomvc-api.localhost`)'
+      - 'traefik.http.routers.api.entrypoints=web'
+      - 'traefik.http.services.api.loadbalancer.server.port=1337'
+      - 'traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,PATCH,DELETE'
+      - 'traefik.http.middlewares.testheader.headers.accesscontrolalloworiginlist=http://todomvc.localhost'
+      - 'traefik.http.middlewares.testheader.headers.accesscontrolallowcredentials=true'
+      - 'traefik.http.middlewares.testheader.headers.accesscontrolmaxage=100'
+      - 'traefik.http.middlewares.testheader.headers.addvaryheader=true'
+  client:
+    build:
+      context: ./apps/react-rtk
+      args:
+        API_URL: 'http://todomvc-api.localhost'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.client.rule=Host(`todomvc.localhost`)'
+      - 'traefik.http.routers.client.entrypoints=web'
+      - 'traefik.http.services.client.loadbalancer.server.port=8080'
+      - 'traefik.http.middlewares.testheader.headers.framedeny=true'
+      - 'traefik.http.middlewares.testheader.headers.browserxssfilter=true'
+      - 'traefik.http.middlewares.testheader.headers.contenttypenosniff=true'
