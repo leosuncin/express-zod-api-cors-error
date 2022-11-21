@@ -1,0 +1,28 @@
+name: Continuous Integration
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  unit-test:
+    name: Run the unit tests 🧪
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
+      - name: Install PNPM 🧰
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Install Node.js LTS 📜
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: pnpm
+      - name: Install dependencies 📦
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+      - name: Run tests 🧪
+        run: pnpm test
