@@ -22,26 +22,6 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     ports:
       - '8081:8081'
-  api:
-    build:
-      context: ./apps/api
-      args:
-        PORT: 1337
-    environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
-    profiles:
-      - production
-    ports:
-      - '1337:1337'
-  client:
-    build:
-      context: ./apps/react-rtk
-      args:
-        API_URL: 'http://localhost:1337'
-    profiles:
-      - production
-    ports:
-      - '8080:8080'
 
 volumes:
   postgres-data:
