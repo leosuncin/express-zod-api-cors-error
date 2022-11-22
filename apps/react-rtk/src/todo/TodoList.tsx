@@ -54,7 +54,7 @@ function TodoList() {
         checked={activeCount === 0}
         onChange={handleToggleAll}
       />
-      <label htmlFor="toggle-all" aria-label="Toggle all" />
+      <label htmlFor="toggle-all">Toggle all</label>
       <ul className="todo-list">
         {todos.map((todo) => (
           <TodoItem
