@@ -1,5 +1,6 @@
 const {
   createConfig,
+  createMiddleware,
   createServer,
   DependsOnMethod,
   defaultEndpointsFactory,
@@ -7,61 +8,80 @@ const {
 } = require('express-zod-api');
 
 const input = z.object({ name: z.string().optional().default('world') });
-const output = z.object({ message: z.string() });
+const output = z.object({
+  message: z.string(),
+  authorized: z.boolean().optional().default(false),
+});
+
+const authMiddleware = createMiddleware({
+  input: z.object({}),
+  async middleware({ logger, request }) {
+    logger.debug('headers', request.headers);
+
+    if (request.headers.authorization) {
+      const [type, token] = request.headers.authorization.split(' ');
+      logger.debug(`Authorization ${type}`, { token });
+
+      return { token };
+    }
+
+    return {};
+  },
+});
 
 /**
  * @type {import('express-zod-api').Routing}
  */
 const routing = {
   hello: new DependsOnMethod({
-    get: defaultEndpointsFactory.build({
+    get: defaultEndpointsFactory.addMiddleware(authMiddleware).build({
       method: 'get',
       input,
       output,
       async handler({ input, logger }) {
         const message = `Hello ${input.name} from GET method`;
         logger.info(message);
-        return { message };
+        return { message, authorized: Boolean(input.token) };
       },
     }),
-    post: defaultEndpointsFactory.build({
+    post: defaultEndpointsFactory.addMiddleware(authMiddleware).build({
       method: 'post',
       input,
       output,
       async handler({ input, logger }) {
         const message = `Hello ${input.name} from POST method`;
         logger.info(message);
-        return { message };
+        return { message, authorized: Boolean(input.token) };
       },
     }),
-    put: defaultEndpointsFactory.build({
+    put: defaultEndpointsFactory.addMiddleware(authMiddleware).build({
       method: 'put',
       input,
       output,
       async handler({ input, logger }) {
         const message = `Hello ${input.name} from PUT method`;
         logger.info(message);
-        return { message };
+        return { message, authorized: Boolean(input.token) };
       },
     }),
-    patch: defaultEndpointsFactory.build({
+    patch: defaultEndpointsFactory.addMiddleware(authMiddleware).build({
       method: 'patch',
       input,
       output,
       async handler({ input, logger }) {
         const message = `Hello ${input.name} from PATCH method`;
         logger.info(message);
-        return { message };
+        return { message, authorized: Boolean(input.token) };
       },
     }),
-    delete: defaultEndpointsFactory.build({
+    delete: defaultEndpointsFactory.addMiddleware(authMiddleware).build({
       method: 'delete',
       input,
       output,
       async handler({ input, logger }) {
         const message = `Hello ${input.name} from DELETE method`;
         logger.info(message);
-        return { message };
+        return { message, authorized: Boolean(input.token) };
       },
     }),
   }),

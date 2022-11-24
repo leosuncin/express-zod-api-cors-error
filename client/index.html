@@ -53,6 +53,31 @@
               <input type="text" id="name" name="name" class="form-control" />
             </div>
 
+            <fieldset class="input-group mb-3">
+              <legend>Send the authorization</legend>
+              <select name="type" id="authorization" class="form-select">
+                <option value selected>Pick an authorization type</option>
+                <option value="Basic">Basic</option>
+                <option value="Bearer">Bearer</option>
+                <option value="JWT">JWT</option>
+              </select>
+              <input
+                type="text"
+                id="token"
+                name="token"
+                class="form-control"
+                disabled
+              />
+              <button
+                type="button"
+                id="generate-token"
+                class="btn btn-outline-secondary"
+                disabled
+              >
+                Generate value
+              </button>
+            </fieldset>
+
             <div class="mb-3">
               <button type="submit" class="btn btn-primary">
                 Send request
