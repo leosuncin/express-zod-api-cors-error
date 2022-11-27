@@ -110,7 +110,12 @@ const routing = {
 };
 
 const config = createConfig({
-  cors: true,
+  cors({ defaultHeaders }) {
+    return {
+      ...defaultHeaders,
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    };
+  },
   logger: {
     level: 'debug',
     color: true,
