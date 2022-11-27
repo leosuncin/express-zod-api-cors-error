@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@commitlint/cli': 17.3.0
   '@commitlint/config-conventional': 17.3.0
-  express-zod-api: 8.4.0
+  express-zod-api: 8.4.1
   http-server: 14.1.1
   husky: 8.0.2
   lint-staged: 13.0.3
@@ -12,7 +12,7 @@ specifiers:
   sort-package-json: 2.1.0
 
 dependencies:
-  express-zod-api: 8.4.0
+  express-zod-api: 8.4.1
   http-server: 14.1.1
 
 devDependencies:
@@ -836,7 +836,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.2
+      ms: 2.1.3
     dev: false
 
   /debug/4.3.4:
@@ -1041,8 +1041,8 @@ packages:
       busboy: 1.6.0
     dev: false
 
-  /express-zod-api/8.4.0:
-    resolution: {integrity: sha512-Kry73PjbEGdZd0EdKn6Uk7hFGHVAdCaSlp1OpLifh4tA0h0E5aQ5EBawWH9z4klpJYFKHenYkC6Tpxjgv8RrnQ==}
+  /express-zod-api/8.4.1:
+    resolution: {integrity: sha512-8V4uJc/k79+/xbqDRyWB4IWFAxrSGL0LvlP+xCYfzwQAD2RqGaKjS9hDc1r4L5i67SueYarTGTgMF6ndDv46Kg==}
     engines: {node: ^14.17.0 || ^16.10.0 || ^18.0.0}
     peerDependencies:
       '@types/jest': '*'
@@ -1066,7 +1066,7 @@ packages:
       express-fileupload: 1.4.0
       http-errors: 2.0.0
       mime: 3.0.0
-      openapi3-ts: 3.1.1
+      openapi3-ts: 3.1.2
       ramda: 0.28.0
       triple-beam: 1.3.0
       winston: 3.8.2
@@ -1944,6 +1944,7 @@ packages:
 
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
+    dev: true
 
   /ms/2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -2062,8 +2063,8 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
-  /openapi3-ts/3.1.1:
-    resolution: {integrity: sha512-lNUS87ncFqm1m8W21sbTGIeD7sydkQ4nnRUrkBiGlAzTngr50eBKU2suUXhdEk51z6m4cCgaXdB1SFgXtyn81Q==}
+  /openapi3-ts/3.1.2:
+    resolution: {integrity: sha512-S8fijNOqe/ut0kEDAwHZnI7sVYqb8Q3XnISmSyXmK76jgrcf4ableI75KTY1qdksd9EI/t39Vi5M4VYKrkNKfQ==}
     dependencies:
       yaml: 2.1.3
     dev: false

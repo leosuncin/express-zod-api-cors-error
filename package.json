@@ -16,7 +16,7 @@
     "start": "run-p start:*"
   },
   "dependencies": {
-    "express-zod-api": "8.4.0",
+    "express-zod-api": "8.4.1",
     "http-server": "14.1.1"
   },
   "devDependencies": {
