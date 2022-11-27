@@ -33,60 +33,60 @@ const get = defaultEndpointsFactory.addMiddleware(authMiddleware).build({
   method: 'get',
   input,
   output,
-  async handler({ input, logger }) {
+  async handler({ input, logger, options }) {
     const message = `Hello ${input.name} from GET method`;
     logger.info(message);
-    return { message, authorized: Boolean(input.token) };
+    return { message, authorized: Boolean(options.token) };
   },
 });
 const post = defaultEndpointsFactory.addMiddleware(authMiddleware).build({
   method: 'post',
   input,
   output,
-  async handler({ input, logger }) {
+  async handler({ input, logger, options }) {
     const message = `Hello ${input.name} from POST method`;
     logger.info(message);
-    return { message, authorized: Boolean(input.token) };
+    return { message, authorized: Boolean(options.token) };
   },
 });
 const put = defaultEndpointsFactory.addMiddleware(authMiddleware).build({
   method: 'put',
   input,
   output,
-  async handler({ input, logger }) {
+  async handler({ input, logger, options }) {
     const message = `Hello ${input.name} from PUT method`;
     logger.info(message);
-    return { message, authorized: Boolean(input.token) };
+    return { message, authorized: Boolean(options.token) };
   },
 });
 const patch = defaultEndpointsFactory.addMiddleware(authMiddleware).build({
   method: 'patch',
   input,
   output,
-  async handler({ input, logger }) {
+  async handler({ input, logger, options }) {
     const message = `Hello ${input.name} from PATCH method`;
     logger.info(message);
-    return { message, authorized: Boolean(input.token) };
+    return { message, authorized: Boolean(options.token) };
   },
 });
 const del = defaultEndpointsFactory.addMiddleware(authMiddleware).build({
   method: 'delete',
   input,
   output,
-  async handler({ input, logger }) {
+  async handler({ input, logger, options }) {
     const message = `Hello ${input.name} from DELETE method`;
     logger.info(message);
-    return { message, authorized: Boolean(input.token) };
+    return { message, authorized: Boolean(options.token) };
   },
 });
 const all = defaultEndpointsFactory.addMiddleware(authMiddleware).build({
   methods: ['delete', 'get', 'patch', 'post', 'put'],
   input,
   output,
-  async handler({ input, logger }) {
+  async handler({ input, logger, options }) {
     const message = `Hello ${input.name} from unknown method`;
     logger.info(message);
-    return { message, authorized: Boolean(input.token) };
+    return { message, authorized: Boolean(options.token) };
   },
 });
 
